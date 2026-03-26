@@ -21,14 +21,19 @@ a:hover { text-decoration: underline; }
 
 .hero {
   background: linear-gradient(135deg, #0d0f1a 0%, #2b1f44 70%);
-  background-image: url("./assets/banner.png");
   background-repeat: no-repeat;
   background-size: contain;
   /* background-size: cover; */
-  padding: 3rem 1rem;
-  text-align: center;
+  padding: 2rem 1rem;
 }
-.hero-inner h1 { margin: 0 0 .5rem; font-size: 2.4rem; }
+
+.hero-inner {
+  display: flex;
+  align-items: center;
+  gap: 13rem; /* Adds space between texts and image */
+}
+
+.hero-inner h1 { font-size: 2.4rem; }
 .hero-inner p { margin: 0 1rem 1.2rem; color: var(--muted); }
 
 .btn {
@@ -42,20 +47,36 @@ a:hover { text-decoration: underline; }
 .btn:hover { opacity: .88; }
 
 .main-nav {
+  position: absolute;
+  left: 130px;
+  top: 46%;
+  transform: translateY(-50%);
   display: flex;
-  justify-content: center;
-  gap: 1rem;
-  padding: .8rem;
-  background: rgba(30, 25, 38, .65);
+  flex-direction: column;
+  gap: 0.5rem;
+  padding: 1rem;
+  background: rgba(30, 25, 38, 0.9);
+  border-radius: 12px;
+  width: 190px;
+  z-index: 100;
+  width: 190px;
+  z-index: 100;
 }
 .main-nav a {
   color: var(--text);
   border: 1px solid #555;
-  border-radius: 12px;
-  padding: .4rem .8rem;
+  border-radius: 8px;
+  padding: 0.6rem 1rem;
   font-weight: 600;
+  text-align: center;
+  display: block;
 }
 .main-nav a:hover { background: rgba(255,204,0,.12); }
+
+.main-nav h2 {
+  margin: 0 1.5rem 0.5rem;
+  font-size: 1.2rem;
+}
 
 .section {
   max-width: 960px;
@@ -97,4 +118,15 @@ footer {
   text-align: center;
   color: #9baac0;
   border-top: 1px solid rgba(255,255,255,.08);
+}
+
+#headerIcon {
+  display: flex;
+  margin-left: 30%;
+}
+
+
+#racingText {
+  display: flex;
+  margin-left: 5rem;
 }
