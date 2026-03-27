@@ -1,0 +1,226 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>404 | Galilaios Racing</title>
+
+<style>
+:root {
+  --bg: #0b0d12;
+  --paper: #171a22;
+  --accent: #f2c230;
+  --accent-strong: #ffd54d;
+  --blue: #3a66ff;
+  --text: #e6e9ef;
+  --muted: #9aa3b2;
+}
+
+body {
+  margin: 0;
+  font-family: "Segoe UI", Roboto, Arial, sans-serif;
+  background: radial-gradient(circle at top, #1a1f2b 0%, #05070b 100%);
+  color: var(--text);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 100vh;
+}
+
+.container {
+  text-align: center;
+}
+
+h1 {
+  font-size: 5rem;
+  color: var(--accent);
+  margin: 0;
+}
+
+p {
+  color: var(--muted);
+}
+
+.btn {
+  display: inline-block;
+  margin-top: 1rem;
+  background: linear-gradient(135deg, var(--accent), var(--accent-strong));
+  color: #1a1a1a;
+  padding: 0.7rem 1.3rem;
+  border-radius: 22px;
+  font-weight: 700;
+  text-decoration: none;
+}
+
+canvas {
+  display: none;
+  margin-top: 20px;
+  border: 2px solid var(--blue);
+  background: #fff;
+}
+</style>
+</head>
+
+<body>
+
+<div class="container">
+  <h1>404</h1>
+  <p>You missed the apex... this page doesn't exist.</p>
+  <p><small>Press <b>G</b> for a secret race 👀</small></p>
+  <a href="/" class="btn">Back to Garage</a>
+
+  <canvas id="gameCanvas"></canvas>
+</div>
+<script>
+document.addEventListener("DOMContentLoaded", () => {
+
+const canvas = document.getElementById("gameCanvas");
+const ctx = canvas.getContext("2d");
+
+let gameActive = false;
+
+// Track system
+const SEGMENTS = 5;
+let playerSegment = 0;
+let aiSegment = 0;
+let lap = 0;
+
+let player = { x: 200, y: 500, speed: 0 };
+let ai = { x: 260, y: 500, speed: 2 };
+
+const keys = {};
+
+document.addEventListener("keydown", (e) => {
+  keys[e.key] = true;
+
+  if (e.key.toLowerCase() === "g" && !gameActive) {
+    startGame();
+  }
+});
+
+document.addEventListener("keyup", (e) => {
+  keys[e.key] = false;
+});
+
+function startGame() {
+  console.log("Game started"); // debug
+  gameActive = true;
+  canvas.style.display = "block";
+  canvas.width = window.innerWidth;
+  canvas.height = window.innerHeight;
+  loop();
+}
+
+function drawCar(x, y, color = "white") {
+  ctx.fillStyle = color;
+  ctx.fillRect(x - 6, y - 12, 12, 24);
+}
+
+function drawTrack(segment) {
+  ctx.fillStyle = "#000";
+  ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+  ctx.strokeStyle = "#fff";
+  ctx.lineWidth = 3;
+
+  const mid = canvas.width / 2;
+
+  switch(segment) {
+    case 0:
+      ctx.setLineDash([20, 20]);
+      ctx.beginPath();
+      ctx.moveTo(mid, 0);
+      ctx.lineTo(mid, canvas.height);
+      ctx.stroke();
+      break;
+
+    case 1:
+      ctx.setLineDash([]);
+      ctx.beginPath();
+      ctx.moveTo(mid - 50, 0);
+      ctx.lineTo(mid + 50, canvas.height);
+      ctx.stroke();
+      break;
+
+    case 2:
+      ctx.beginPath();
+      ctx.moveTo(mid + 50, 0);
+      ctx.lineTo(mid - 50, canvas.height);
+      ctx.stroke();
+      break;
+
+    case 3:
+      ctx.strokeRect(mid - 40, 0, 80, canvas.height);
+      break;
+
+    case 4:
+      ctx.beginPath();
+      ctx.moveTo(mid - 100, 0);
+      ctx.lineTo(mid + 100, canvas.height);
+      ctx.stroke();
+      break;
+  }
+}
+
+function drawHUD() {
+  ctx.fillStyle = "white";
+  ctx.font = "20px Arial";
+
+  ctx.fillText("MiniFormula", 20, 30);
+  ctx.fillText("Speed: " + player.speed.toFixed(1), 20, 60);
+  ctx.fillText("Lap: " + lap, 20, 90);
+  ctx.fillText("Segment: " + playerSegment, 20, 120);
+}
+
+function update() {
+  if (keys["ArrowUp"]) player.speed += 0.12;
+  else player.speed *= 0.97;
+
+  if (keys["ArrowLeft"]) player.x -= 4;
+  if (keys["ArrowRight"]) player.x += 4;
+
+  if (keys[" "]) player.speed += 0.25;
+
+  player.y -= player.speed;
+
+  if (player.y < 0) {
+    player.y = canvas.height;
+
+    playerSegment++;
+    if (playerSegment >= SEGMENTS) {
+      playerSegment = 0;
+      lap++;
+    }
+  }
+
+  ai.y -= ai.speed;
+
+  if (ai.y < 0) {
+    ai.y = canvas.height;
+    aiSegment++;
+    if (aiSegment >= SEGMENTS) aiSegment = 0;
+  }
+}
+
+function loop() {
+  if (!gameActive) return;
+
+  update();
+  drawTrack(playerSegment);
+
+  drawCar(player.x, player.y);
+
+  if (aiSegment === playerSegment) {
+    drawCar(ai.x, ai.y, "gray");
+  }
+
+  drawHUD();
+
+  requestAnimationFrame(loop);
+}
+
+});
+</script>
+
+</body>
+</html>
